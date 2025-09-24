@@ -1,18 +1,23 @@
 import { Component } from '@angular/core';
+import {
+  HeavyComputationAltPipe,
+  HeavyComputationPipe,
+} from './heavyComputation.pipe';
 
 @Component({
   selector: 'app-root',
+  imports: [HeavyComputationPipe, HeavyComputationAltPipe],
   template: `
-    @for (person of persons; track person) {
-      {{ heavyComputation(person, $index) }}
-    }
+    <p>
+      @for (person of persons; track person; let index = $index) {
+        {{ person | heavyComputation: index }}
+      }
+    </p>
+    <p>
+      {{ persons | heavyComputationAlt }}
+    </p>
   `,
 })
 export class AppComponent {
   persons = ['toto', 'jack'];
-
-  heavyComputation(name: string, index: number) {
-    // very heavy computation
-    return `${name} - ${index}`;
-  }
 }
