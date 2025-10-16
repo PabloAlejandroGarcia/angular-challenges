@@ -4,6 +4,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserService } from './user.service';
@@ -38,7 +39,11 @@ export class ActionsComponent {
 
   constructor() {
     effect(() => {
-      this.userService.log(this.action() ?? 'No action selected');
+      // Ensure effect still triggers when action signal value changes
+      const action = this.action();
+      // Since userService.name is a signal, accessing it here would make the effect
+      // re-run whenever userService.name changes. To avoid that, we use untracked.
+      untracked(() => this.userService.log(action ?? 'No action selected'));
     });
   }
 }
