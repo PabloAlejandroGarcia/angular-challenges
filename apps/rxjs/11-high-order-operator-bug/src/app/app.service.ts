@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { merge, Observable, of } from 'rxjs';
+import { combineLatest, map, Observable, of } from 'rxjs';
 import { LocalDBService, TopicType } from './localDB.service';
 
 @Injectable({ providedIn: 'root' })
@@ -13,7 +13,11 @@ export class AppService {
     return infoByType.length > 0
       ? infoByType
           .map((t) => this.dbService.deleteOneTopic(t.id))
-          .reduce((acc, curr) => merge(acc, curr), of(true))
+          .reduce(
+            (acc, curr) =>
+              combineLatest([acc, curr]).pipe(map(([a, c]) => a && c)),
+            of(true),
+          )
       : of(true);
   }
 }
